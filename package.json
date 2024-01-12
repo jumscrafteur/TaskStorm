@@ -38,8 +38,11 @@
 		"bits-ui": "^0.14.0",
 		"clsx": "^2.0.0",
 		"cmdk-sv": "^0.0.12",
+		"formsnap": "^0.4.2",
 		"lucide-svelte": "^0.292.0",
+		"sveltekit-superforms": "^1.13.2",
 		"tailwind-merge": "^2.0.0",
-		"tailwind-variants": "^0.1.18"
+		"tailwind-variants": "^0.1.18",
+		"zod": "^3.22.4"
 	}
 }

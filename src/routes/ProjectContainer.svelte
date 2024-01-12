@@ -43,7 +43,7 @@
 	});
 </script>
 
-<div class="grid grid-cols-8 gap-2">
+<div class="grid grid-cols-4 gap-2 sm:grid-cols-8">
 	<Input type="text" placeholder="🔍 Search" class="col-span-4" bind:value={searchFilter} />
 	<Toggle
 		variant="outline"

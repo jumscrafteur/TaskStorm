@@ -4,7 +4,7 @@
 
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
-	import { CheckSquare2, MinusSquare, Network, Square, XSquare } from 'lucide-svelte';
+	import { CheckSquare2, MinusSquare, Square, XSquare } from 'lucide-svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -18,9 +18,18 @@
 		canceled: 0
 	};
 
-	tasks.forEach((task) => {
-		statePercentage[task.state] += 100 / tasks.length;
-	});
+	$: {
+		statePercentage = {
+			'in progress': 0,
+			'on hold': 0,
+			done: 0,
+			canceled: 0
+		};
+
+		tasks.forEach((task) => {
+			statePercentage[task.state] += 100 / tasks.length;
+		});
+	}
 
 	const stateColors = {
 		'in progress': 'neutral-500',
@@ -31,21 +40,20 @@
 
 	let openPanels = tasks.map((_) => false);
 
-	const updateTask = (task: Task, state: State) => {
-		console.log({
-			...task,
-			state
-		});
-
+	const updateTask = async (task: Task, state: State, index: number) => {
 		let newTask = {
 			...task,
 			state
 		};
 
-		fetch(`/api/task/${task.id}`, {
+		await fetch(`/api/tasks/${task.id}`, {
 			method: 'PUT',
-			body: newTask
+			body: JSON.stringify(newTask)
 		});
+
+		tasks = tasks.map((task) => (task.id == newTask.id ? newTask : task));
+
+		openPanels[index] = false;
 	};
 </script>
 
@@ -70,7 +78,7 @@
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>
-		{#each tasks as task, index}
+		{#each tasks as task, index (task.id)}
 			<Table.Row>
 				<Table.Cell
 					class={cn(
@@ -102,17 +110,29 @@
 							<Button
 								variant="ghost"
 								class="flex justify-start gap-2"
-								on:click={() => updateTask(task, 'in progress')}
+								on:click={() => updateTask(task, 'in progress', index)}
 							>
 								<Square /> In Progress
 							</Button>
-							<Button variant="ghost" class="flex justify-start gap-2">
+							<Button
+								variant="ghost"
+								class="flex justify-start gap-2"
+								on:click={() => updateTask(task, 'on hold', index)}
+							>
 								<MinusSquare class="text-amber-500" /> On Hold
 							</Button>
-							<Button variant="ghost" class="flex justify-start gap-2">
+							<Button
+								variant="ghost"
+								class="flex justify-start gap-2 "
+								on:click={() => updateTask(task, 'done', index)}
+							>
 								<CheckSquare2 class="text-emerald-500" /> Done
 							</Button>
-							<Button variant="ghost" class="flex justify-start gap-2">
+							<Button
+								variant="ghost"
+								class="flex justify-start gap-2 "
+								on:click={() => updateTask(task, 'canceled', index)}
+							>
 								<XSquare class="text-red-500" /> Canceled
 							</Button>
 						</Popover.Content>
