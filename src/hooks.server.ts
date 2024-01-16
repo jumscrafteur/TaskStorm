@@ -1,5 +1,6 @@
+import type { Handle, HandleFetch } from '@sveltejs/kit';
 
-export async function handle({ event, resolve }) {
+export const handle: Handle = async ({ event, resolve }) => {
     const authToken = event.cookies.get('jwt');
 
     if (!authToken && !event.url.pathname.startsWith('/login') && !event.url.pathname.startsWith('/register')) {
@@ -13,4 +14,14 @@ export async function handle({ event, resolve }) {
     const response = await resolve(event);
     return response;
 
+};
+
+export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
+    const authToken = event.cookies.get('jwt');
+
+    if (authToken) {
+        request.headers.set("Authorization", `Bearer ${authToken}`)
+    }
+
+    return fetch(request);
 };

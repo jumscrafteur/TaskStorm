@@ -1,3 +1,4 @@
+import { API_ROUTE } from "$env/static/private";
 import { fail, redirect } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms/server";
 import type { Actions, PageServerLoad } from "./$types";
@@ -16,14 +17,20 @@ export const actions: Actions = {
             });
         }
 
-        if (form.data.email == "hsansane@gmail.com") {
-            event.cookies.set("jwt", "ok", { httpOnly: true, maxAge: 60 * 60 * 24, sameSite: 'strict' });
+        const res = await event.fetch(API_ROUTE + "/login", {
+            method: 'POST',
+            body: JSON.stringify({
+                email: form.data.email,
+                password: form.data.password
+            })
+        })
+
+        const data = await res.json();
+
+        if (data["accessToken"]) {
+            event.cookies.set("jwt", data.accessToken, { httpOnly: true, maxAge: 60 * 60 * 24, sameSite: 'strict' });
             throw redirect(300, "/");
         }
-        else
-            return fail(400, {
-                form
-            });
 
 
         return {

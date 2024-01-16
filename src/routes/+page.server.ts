@@ -1,6 +1,9 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
+
+
+
 export const load: PageServerLoad = async ({ fetch }) => {
 	const DRAFTS = (await (await fetch('/api/drafts')).json()) as Draft[];
 	if (DRAFTS == null) {

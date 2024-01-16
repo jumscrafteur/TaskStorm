@@ -30,6 +30,42 @@ declare global {
 		state: State;
 		description: string;
 	};
+
+	type API_ProjectStatus = 'WIP' | 'PENDING' | 'COMPLETED' | 'FROZEN';
+	type API_TaskStatus = 'WIP' | 'PENDING' | 'DONE' | 'FROZEN';
+
+
+	type API_Draft = {
+		id: number
+		created: string
+		content: string
+	}
+
+	class API_ProjectInfo {
+		id: number;
+		creationDate: Date;
+		name: string;
+		color: Color;
+		description: string;
+		status: API_ProjectStatus;
+	}
+
+	class API_ProjectCreation {
+		name: string;
+		description: string;
+		color: "Black";
+		status: API_ProjectStatus;
+	}
+
+	class API_TaskInfo {
+		id: number;
+		creationDate: Date;
+		scheduledDate: Date;
+		name: string;
+		description: string;
+		status: API_TaskStatus;
+		project: API_ProjectInfo;
+	}
 }
 
 export { };
